@@ -106,7 +106,7 @@ class RL_Trainer(object):
                 itr,
                 initial_expertdata,
                 collect_policy,
-                self.params['logging']['batch_size']
+                self.params['alg']['batch_size']
             )  # HW1: implement this function below
             paths, envsteps_this_batch, train_video_paths = training_returns
             self.total_envsteps += envsteps_this_batch
