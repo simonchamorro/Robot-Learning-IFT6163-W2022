@@ -57,7 +57,7 @@ def my_app(cfg: DictConfig):
     print("Command Dir:", os.getcwd())
     params = vars(cfg)
     # print ("params: ", json.dumps(params, indent=4))
-    print ("params: ", params)
+    # print ("params: ", params)
 
     ##################################
     ### CREATE DIRECTORY FOR LOGGING
