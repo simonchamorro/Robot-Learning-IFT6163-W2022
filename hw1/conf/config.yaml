@@ -4,7 +4,7 @@ env:
   exp_name: "bob"
   env_name: Ant-v2 # choices are [Ant-v2, Humanoid-v2, Walker2d-v2, HalfCheetah-v2, Hopper-v2]
   max_episode_length: 100 
-  render: true
+  render: false
   
 alg:
   num_rollouts: 5
