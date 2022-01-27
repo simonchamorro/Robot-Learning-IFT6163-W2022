@@ -4,7 +4,7 @@ env:
   exp_name: "bob"
   env_name: Ant-v2 # choices are [Ant-v2, Humanoid-v2, Walker2d-v2, HalfCheetah-v2, Hopper-v2]
   max_episode_length: 100 
-  render: false
+  render: true
   
 alg:
   num_rollouts: 5
@@ -17,7 +17,7 @@ alg:
   n_layers: 2 # Network depths
   network_width: 64 # The width of the network layers
   learning_rate: 5e-3 # THe learning rate for BC
-  max_replay_buffer_size: 1e5 ## Size of the replay buffer
+  max_replay_buffer_size: 100000 ## Size of the replay buffer
   use_gpu: False
   which_gpu: 0 # The index for the GPU (the computer you use may have more than one)
   discrete: False
