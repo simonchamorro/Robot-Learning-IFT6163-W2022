@@ -12,8 +12,8 @@ class BC_Trainer(object):
         #######################
         ## AGENT PARAMS
         #######################
-        print ("params2: ", params)
-        print ("params: ", params["alg"]['n_layers'])
+        # print ("params2: ", params)
+        # print ("params: ", params["alg"]['n_layers'])
         self.params = params
 
         ################
