@@ -8,9 +8,9 @@ env:
   
 alg:
   num_rollouts: 5
-  do_dagger: false
+  do_dagger: true
   num_agent_train_steps_per_iter: 1000 # number of gradient steps for training policy (per iter in n_iter)
-  n_iter: 1
+  n_iter: 25
   batch_size: 1000 # training data collected (in the env) during each iteration
   eval_batch_size: 1000 # eval data collected (in the env) for logging metrics
   train_batch_size: 100 # number of sampled data points to be used per gradient/train step
@@ -25,7 +25,7 @@ alg:
   ob_dim: 0 ## This will be overridden in the code
 
 logging:
-  video_log_freq: 5 # How often to generate a video to log/
+  video_log_freq: 1 # How often to generate a video to log/
   scalar_log_freq: 1 # How often to log training information and run evaluation during training.
   save_params: true # Should the parameters given to the script be saved? (Always...)
   random_seed: 1234

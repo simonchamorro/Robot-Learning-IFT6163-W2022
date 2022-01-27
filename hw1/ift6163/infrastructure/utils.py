@@ -4,7 +4,7 @@ import time
 ############################################
 ############################################
 
-def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('human')):
+def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('rgb_array')):
 
     # initialize env for the beginning of a new rollout
     ob = env.reset()
@@ -49,7 +49,7 @@ def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('
 
     return Path(obs, image_obs, acs, rewards, next_obs, terminals)
 
-def sample_trajectories(env, policy, min_timesteps_per_batch, max_path_length, render=False, render_mode=('human')):
+def sample_trajectories(env, policy, min_timesteps_per_batch, max_path_length, render=False, render_mode=('rgb_array')):
     """
         Collect rollouts until we have collected min_timesteps_per_batch steps.
 
@@ -65,7 +65,7 @@ def sample_trajectories(env, policy, min_timesteps_per_batch, max_path_length, r
 
     return paths, timesteps_this_batch
 
-def sample_n_trajectories(env, policy, ntraj, max_path_length, render=True, render_mode=('human')):
+def sample_n_trajectories(env, policy, ntraj, max_path_length, render=True, render_mode=('rgb_array')):
     """
         Collect ntraj rollouts.
 
@@ -73,7 +73,7 @@ def sample_n_trajectories(env, policy, ntraj, max_path_length, render=True, rend
     """
     paths = []
     for i in range(ntraj):
-        paths.append(sample_trajectory(env, policy, max_path_length, render=render))
+        paths.append(sample_trajectory(env, policy, max_path_length, render=render, render_mode=render_mode))
 
     return paths
 
