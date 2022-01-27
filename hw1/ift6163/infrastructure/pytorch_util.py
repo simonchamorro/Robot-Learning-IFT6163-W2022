@@ -53,7 +53,7 @@ def build_mlp(
     modules.append(nn.Linear(size, output_size))
     modules.append(output_activation)
     mlp = nn.Sequential(*modules)
-    return mlp
+    return mlp.double()
 
 
 device = None
