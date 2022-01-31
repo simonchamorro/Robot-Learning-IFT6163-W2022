@@ -33,7 +33,7 @@ def plot_data(env, expert, itr, avg_reward, std_reward, plot_dir):
     plt.plot(itr, [expert]*len(itr), label='Expert')
     plt.ylabel('Average Reward', fontsize=10)
     plt.xlabel('Iteration Number', fontsize=10)
-    plt.title('DAgger in'+ env, fontsize=15)
+    plt.title('DAgger in ' + env, fontsize=15)
     plt.legend(loc='lower right')
     plt.savefig(plot_dir + 'q2-' + env + '.png')
 
