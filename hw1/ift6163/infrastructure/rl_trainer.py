@@ -163,7 +163,29 @@ class RL_Trainer(object):
 
             file = open('../../../' + load_initial_expertdata,'rb')
             loaded_paths = pickle.load(file)
-            return loaded_paths, 0, None
+            training_paths = []
+            expert_data = 0
+            data_limit = self.params['alg']['initial_exp_data']
+
+            # Remove some data if initial_exp_data is smaller than the total data we have
+            for p in loaded_paths:
+                if data_limit >= expert_data + len(p['observation']):
+                    training_paths.append(p)
+                    expert_data += len(p['observation'])
+                elif data_limit > expert_data:
+                    data_qty = data_limit - expert_data
+                    partial_path = {"observation" : p["observation"][:data_qty],
+                                    "image_obs" : p["image_obs"][:data_qty],
+                                    "reward" : p["reward"][:data_qty],
+                                    "action" : p["action"][:data_qty],
+                                    "next_observation": p["next_observation"][:data_qty],
+                                    "terminal": p["terminal"][:data_qty]}
+                    training_paths.append(partial_path)
+                    expert_data += data_qty
+                else:
+                    break 
+                    
+            return training_paths, 0, None
 
         else:
             # Collect `batch_size` samples to be used for training
