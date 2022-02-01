@@ -81,9 +81,9 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             observation = obs[None]
 
         # Return the action that the policy prescribes
-        observation = torch.from_numpy(obs)
+        observation = ptu.from_numpy(obs).double()
         action = self.forward(observation) 
-        return action.detach().numpy()
+        return ptu.to_numpy(action)
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -113,8 +113,8 @@ class MLPPolicySL(MLPPolicy):
         # Update the policy and return the loss
         self.optimizer.zero_grad()
         criterion = nn.MSELoss()
-        obs = torch.from_numpy(observations).double()
-        ac = torch.from_numpy(actions).double()
+        obs = ptu.from_numpy(observations).double()
+        ac = ptu.from_numpy(actions).double()
         loss = criterion(self.forward(obs), ac)
         loss.backward()
         self.optimizer.step()
