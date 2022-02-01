@@ -184,7 +184,7 @@ class RL_Trainer(object):
                     expert_data += data_qty
                 else:
                     break 
-                    
+
             return training_paths, 0, None
 
         else:
