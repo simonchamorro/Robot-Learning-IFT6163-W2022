@@ -81,6 +81,8 @@ class FFModel(nn.Module, BaseModel):
         # obs_normalized = # TODO(Q1)
         # acs_normalized = # TODO(Q1)
 
+        breakpoint()
+
         # predicted change in obs
         concatenated_input = torch.cat([obs_normalized, acs_normalized], dim=1)
 
@@ -108,6 +110,7 @@ class FFModel(nn.Module, BaseModel):
         # prediction = # TODO(Q1) get numpy array of the predicted next-states (s_t+1)
         # Hint: `self(...)` returns a tuple, but you only need to use one of the
         # outputs.
+        breakpoint()
         return prediction
 
     def update(self, observations, actions, next_observations, data_statistics):
@@ -133,6 +136,8 @@ class FFModel(nn.Module, BaseModel):
         # loss = # TODO(Q1) compute the loss
         # Hint: `self(...)` returns a tuple, but you only need to use one of the
         # outputs.
+
+        breakpoint()
 
         self.optimizer.zero_grad()
         loss.backward()

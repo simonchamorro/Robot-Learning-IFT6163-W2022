@@ -53,7 +53,10 @@ class RL_Trainer(object):
         # Make the gym environment
         self.env = gym.make(self.params['env_name'])
         print (self.env) 
-        sys.exit()
+
+        # Bug?
+        # sys.exit()
+        
         if 'env_wrappers' in self.params:
             # These operations are currently only for Atari envs
             self.env = wrappers.Monitor(self.env, os.path.join(self.params['logdir'], "gym"), force=True)
@@ -189,13 +192,30 @@ class RL_Trainer(object):
             envsteps_this_batch: the sum over the numbers of environment steps in paths
             train_video_paths: paths which also contain videos for visualization purposes
         """
-        # TODO: get this from previous assignment
+        # Collect `batch_size` samples to be used for training
+        print("\nCollecting data to be used for training...")
+        paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, num_transitions_to_sample, 
+                                                               self.params['ep_len'], render=False)
+
+        # collect more rollouts with the same policy, to be saved as videos in tensorboard
+        # note: here, we collect MAX_NVIDEO rollouts, each of length MAX_VIDEO_LEN
+        train_video_paths = utils.sample_n_trajectories(self.env, collect_policy, MAX_NVIDEO, 
+                                                        MAX_VIDEO_LEN, render=True,
+                                                        render_mode=('rgb_array'))
 
         return paths, envsteps_this_batch, train_video_paths
 
     def train_agent(self):
-        print('TODO')
-    # TODO: get this from previous assignment
+        all_logs = []
+        for train_step in range(self.params['num_agent_train_steps_per_iter']):
+
+            # Sample some data from the data buffer
+            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = self.agent.sample(self.params['train_batch_size'])
+
+            # Use the sampled data to train an agent
+            train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)
+            all_logs.append(train_log)
+        return all_logs
 
     ####################################
     ####################################
