@@ -78,20 +78,30 @@ class MPCPolicy(BasePolicy):
                     candidate_sequences = np.random.uniform(low=self.low, high=self.high, 
                                                         size=(num_sequences, horizon, self.ac_dim))
                 else:
-                    # TODO: Sample sequences
-                    pass
+                    # Sample sequences
+                    candidate_sequences = np.zeros((num_sequences, horizon, self.ac_dim))
+                    for i in range(horizon):
+                        step_covariance_matrix = np.diag(distribution_var[i,:])
+                        candidate_sequences[:,i,:] = np.random.multivariate_normal(distribution_mean[i,:], 
+                                                                                   step_covariance_matrix, 
+                                                                                   size=num_sequences)
 
                 # Get elites
                 candidates_return = self.evaluate_candidate_sequences(candidate_sequences, obs)
                 best_seq_idx = np.argsort(candidates_return)[-self.cem_num_elites:]
                 elite_sequences = candidate_sequences[best_seq_idx]
 
-                # TODO
-                # Update mean and variance (tensors or scalars?)
+                # Update mean and variance
+                if distribution_mean is None:
+                    distribution_mean = np.mean(elite_sequences, axis=0)
+                    distribution_var = np.var(elite_sequences, axis=0) 
+                else:
+                    distribution_mean = self.cem_alpha*np.mean(elite_sequences, axis=0) + (1-self.cem_alpha)*distribution_mean
+                    distribution_var = self.cem_alpha*np.var(elite_sequences, axis=0) + (1-self.cem_alpha)*distribution_var
 
-            # TODO(Q5): Set `cem_action` to the appropriate action sequence chosen by CEM.
+            # Q5: Set `cem_action` to the appropriate action sequence chosen by CEM.
             # The shape should be (horizon, self.ac_dim)
-            cem_action = None
+            cem_action = elite_sequences[-1]
 
             return cem_action[None]
         else:
