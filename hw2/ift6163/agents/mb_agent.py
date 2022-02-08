@@ -92,3 +92,7 @@ class MBAgent(BaseAgent):
         # so each model in our ensemble can get trained on batch_size data
         return self.replay_buffer.sample_random_data(
             batch_size * self.ensemble_size)
+
+    def save(self, path):
+        # TODO
+        print("Save not implemented")
