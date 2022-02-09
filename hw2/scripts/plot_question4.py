@@ -37,7 +37,6 @@ def plot_numseq(data):
     fig = plt.figure()
 
     for k, v in data.items():
-        breakpoint()
         x = np.arange(len(v['Eval_AverageReturn']))
         n = k.split('numseq')[-1].split('_')[0]
         plt.errorbar(x, v['Eval_AverageReturn'], yerr=v['Eval_StdReturn'], fmt='-o', label='N Candidates: ' + n)

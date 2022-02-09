@@ -24,7 +24,7 @@ def plot_results(data):
 
     for k, v in data.items():
         if 'cem' in k:
-            n_cem = k.split('_')[-1].split('_')[4]
+            n_cem = k.split('_')[4]
             label = 'CEM: ' + n_cem 
         else:
             label = 'Random-Shooting'
