@@ -101,7 +101,7 @@ class MPCPolicy(BasePolicy):
 
             # Q5: Set `cem_action` to the appropriate action sequence chosen by CEM.
             # The shape should be (horizon, self.ac_dim)
-            cem_action = elite_sequences[-1]
+            cem_action = distribution_mean
 
             return cem_action[None]
         else:
