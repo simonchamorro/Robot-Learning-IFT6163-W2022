@@ -1,3 +1,67 @@
+# HW2 Model Based RL - Simon Chamorro
+
+## Question 1
+
+For Q1, a dynamics model was implemented and trained with data collected from a random policy. The run logs are stored in `run_logs`. In order to reproduce results:
+
+```
+bash scripts/question1.sh
+```
+
+The figures are automatically generated and stored in the `outputs` folder.
+
+## Question 2
+
+For Q2, we use the dynamics model from Q1 and implement an MPC Policy. The policy uses random-shooting and action selection given a reward function. The run logs are stored in `run_logs`. In order to reproduce results:
+
+```
+bash scripts/question2.sh
+```
+To generate report figures (all figures are saved to the `plots` folder):
+```
+python scripts/plot_question2.py
+```
+
+
+## Question 3
+
+For Q3, we evaluate the dynamics model with the MPC policy on three different environments: obstacles, reacher, and cheetah. The run logs are stored in `run_logs`. In order to reproduce results:
+```
+bash scripts/question3.sh
+```
+
+To generate report figures:
+```
+python scripts/plot_question3.py
+```
+
+
+## Question 4
+
+For Q4, we study the effect of three hyperparameters: ensemble size, number of action sequence candidates, and planning horizon. The run logs are stored in `run_logs`. In order to reproduce results:
+```
+bash scripts/question4.sh
+```
+
+To generate report figures:
+```
+python scripts/plot_question4.py
+```
+
+## Question 5
+
+For Q5, we implement CEM and compare its performance against the random-shooting sampling method that was used for the previous questions. The run logs are stored in `run_logs`. In order to reproduce results:
+```
+bash scripts/question5.sh
+```
+
+To generate report figures:
+```
+python scripts/plot_question5.py
+```
+
+# Original Assignment README
+
 ## Setup
 
 You can run this code on your own machine or on Google Colab (Colab is not completely supported). 
