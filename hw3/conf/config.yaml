@@ -1,5 +1,6 @@
 
 env_name: 'cheetah-ift6163-v0' # ['cheetah-ift6163-v0', 'reacher-ift6163-v0', 'obstacles-ift6163-v0' ]
+rl_alg: 'reinforce'               # ['reinforce', 'ac', 'dyna']
 ep_len: 200
 exp_name: 'todo'
 n_iter: 1
@@ -17,43 +18,18 @@ batch_size: 8000
 train_batch_size: 512
 eval_batch_size: 400
 learning_rate: 0.001
+discount: 0.99
 n_layers: 2
+n_layers_model: 2
+n_layers_policy: 2
+dont_standardize_advantages: True
+reward_to_go: True
+nn_baseline: False
+gae_lambda: 0.1
 size: 250
 seed: 1
 no_gpu: False
 which_gpu: 0
 video_log_freq: -1
-scalar_log_freq: -1
+scalar_log_freq: 1
 save_params: True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-

@@ -7,7 +7,7 @@ print(sys.path)
 
 from ift6163.agents.dyna_agent import MBAgent
 from ift6163.agents.pg_agent import PGAgent
-from ift6163.agents.ac_agent import ACagent
+from ift6163.agents.ac_agent import ACAgent
 from ift6163.infrastructure.rl_trainer import RL_Trainer
 import hydra, json
 from omegaconf import DictConfig, OmegaConf
@@ -24,6 +24,7 @@ class pg_Trainer(object):
             'ensemble_size': params['ensemble_size'],
             'n_layers_model': params['n_layers_model'],
             'n_layers_policy': params['n_layers_policy'],
+            'n_layers': params['n_layers'],
             'size': params['size'],
             'learning_rate': params['learning_rate'],
             }
@@ -65,7 +66,7 @@ class pg_Trainer(object):
         ## RL TRAINER
         ################
 
-        self.rl_trainer = RL_Trainer(self.params , agent_class =  agent)
+        self.rl_trainer = RL_Trainer(self.params, agent_class=agent)
 
     def run_training_loop(self):
 
