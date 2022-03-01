@@ -3,6 +3,7 @@ import numpy as np
 from .base_agent import BaseAgent
 from ift6163.policies.MLP_policy import MLPPolicyPG
 from ift6163.infrastructure.replay_buffer import ReplayBuffer
+from ift6163.infrastructure.utils import normalize
 
 
 class PGAgent(BaseAgent):
@@ -103,8 +104,7 @@ class PGAgent(BaseAgent):
             ## TODO: values were trained with standardized q_values, so ensure
                 ## that the predictions have the same mean and standard deviation as
                 ## the current batch of q_values
-            breakpoint()
-            # values = TODO
+            values = normalize(values_unnormalized, q_values.mean(), q_values.std())
 
             if self.gae_lambda is not None:
                 ## append a dummy T+1 value for simpler recursive calculation
@@ -133,8 +133,7 @@ class PGAgent(BaseAgent):
 
             else:
                 ## TODO: compute advantage estimates using q_values, and values as baselines
-                breakpoint()
-                advantages = TODO
+                advantages = q_values - values
 
         # Else, just set the advantage to [Q]
         else:
@@ -144,7 +143,7 @@ class PGAgent(BaseAgent):
         if self.standardize_advantages:
             ## Standardize the advantages to have a mean of zero
             ## and a standard deviation of one
-            advantages = (advantages - np.mean(advantages))/np.std(advantages)
+            advantages = normalize(advantages, np.mean(advantages), np.std(advantages))
 
         return advantages
 

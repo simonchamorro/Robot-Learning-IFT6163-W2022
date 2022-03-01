@@ -10,6 +10,7 @@ from torch import distributions
 
 from ift6163.infrastructure import pytorch_util as ptu
 from ift6163.policies.base_policy import BasePolicy
+from ift6163.infrastructure.utils import normalize
 
 
 class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
@@ -92,7 +93,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             observation = obs[None]
 
         # Return the action that the policy prescribes
-        observation = ptu.from_numpy(obs)
+        observation = ptu.from_numpy(observation)
         distribution = self.forward(observation) 
         action = distribution.sample()
         return ptu.to_numpy(action)
@@ -155,6 +156,10 @@ class MLPPolicyPG(MLPPolicy):
         loss.backward()
         self.optimizer.step()
 
+        train_log = {
+            'Training Loss': ptu.to_numpy(loss),
+        }
+
         if self.nn_baseline:
             ## TODO: update the neural network baseline using the q_values as
             ## targets. The q_values should first be normalized to have a mean
@@ -165,12 +170,16 @@ class MLPPolicyPG(MLPPolicy):
             ## HINT2: You will need to convert the targets into a tensor using
                 ## ptu.from_numpy before using it in the loss
 
-            breakpoint()
-            # TODO
+            self.baseline_optimizer.zero_grad()
+            q_values = ptu.from_numpy(q_values)
+            normalized_q_vals = normalize(q_values, q_values.mean(), q_values.std())
+            baseline_pred = self.baseline(observations).squeeze()
+            baseline_loss = self.baseline_loss(baseline_pred, normalized_q_vals)
+            baseline_loss.backward()
+            self.baseline_optimizer.step()
 
-        train_log = {
-            'Training Loss': ptu.to_numpy(loss),
-        }
+            train_log['Baseline Loss'] = ptu.to_numpy(baseline_loss)
+
         return train_log
 
     def run_baseline_prediction(self, observations):
