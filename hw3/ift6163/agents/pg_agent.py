@@ -126,7 +126,12 @@ class PGAgent(BaseAgent):
                         ## 0 otherwise.
                     ## HINT 2: self.gae_lambda is the lambda value in the
                         ## GAE formula
-                    breakpoint()
+                    advantage = rews[i] - values[i]
+
+                    if not terminals[i]:
+                        advantage += self.gamma*values[i+1] + self.gamma*self.gae_lambda*advantages[i+1]
+                    
+                    advantages[i] = advantage
 
                 # remove dummy advantage
                 advantages = advantages[:-1]

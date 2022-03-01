@@ -8,6 +8,8 @@ ensemble_size: 3
 num_agent_train_steps_per_iter: 1000
 batch_size_initial: 20000
 batch_size: 8000
+train_batch_size: 512
+eval_batch_size: 400
 learning_rate: 0.001
 discount: 0.99
 n_layers: 2
@@ -16,7 +18,7 @@ n_layers_policy: 2
 dont_standardize_advantages: False
 reward_to_go: True
 nn_baseline: True
-gae_lambda: Null
+gae_lambda: 0.95
 size: 250
 seed: 1
 no_gpu: False
