@@ -50,8 +50,13 @@ class MBAgent(BaseAgent):
 
             # select which datapoints to use for this model of the ensemble
             # you might find the num_data_per_env variable defined above useful
+            rand_indices = np.random.permutation(num_data)[:num_data_per_ens]
+            observations = ob_no[rand_indices,:]
+            actions = ac_na[rand_indices,:]
+            next_observations = next_ob_no[rand_indices,:]
 
-            # Copy this from previous homework
+            # Use datapoints to update one of the dyn_models
+            model =  self.dyn_models[i]
             log = model.update(observations, actions, next_observations,
                                 self.data_statistics)
             loss = log['Training Loss']
@@ -99,3 +104,6 @@ class MBAgent(BaseAgent):
         # so each model in our ensemble can get trained on batch_size data
         return self.replay_buffer.sample_random_data(
             batch_size * self.ensemble_size)
+
+    def save(self, path):
+        print("Save not implemented")
