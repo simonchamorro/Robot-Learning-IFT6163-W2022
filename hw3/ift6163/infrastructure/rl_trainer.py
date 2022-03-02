@@ -9,7 +9,7 @@ from gym import wrappers
 import numpy as np
 import torch
 
-from ift6163.agents.mb_agent import MBAgent
+from ift6163.agents.dyna_agent import MBAgent
 from ift6163.infrastructure import pytorch_util as ptu
 from ift6163.infrastructure import utils
 from ift6163.infrastructure.logger import Logger
