@@ -8,7 +8,7 @@ exp_name: 'todo'
 # Learning
 n_iter: 100
 learning_rate: 0.005
-num_agent_train_steps_per_iter: 1000
+num_agent_train_steps_per_iter: 1
 
 # Batch size
 batch_size: 1000
@@ -17,13 +17,13 @@ train_batch_size: 1000
 eval_batch_size: 1000 
 
 # Model architecture
-size: 250
+size: 64
 n_layers: 2
 n_layers_model: 2
 n_layers_policy: 2
 
 # Discounting
-discount: 0.99
+discount: 1.0
 
 # Model based
 ensemble_size: 3
