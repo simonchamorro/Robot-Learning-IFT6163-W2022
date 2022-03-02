@@ -197,7 +197,18 @@ class MLPPolicyPG(MLPPolicy):
         return ptu.to_numpy(pred.squeeze())
 
 
-class MLPPolicyAC(MLPPolicyPG):
-    def __init__(self, ac_dim, ob_dim, n_layers, size, **kwargs):
+class MLPPolicyAC(MLPPolicy):
+    def update(self, observations, actions, advantages):
+        observations = ptu.from_numpy(observations)
+        actions = ptu.from_numpy(actions)
+        advantages = ptu.from_numpy(advantages)
 
-        super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
+        action_distribution = self.forward(observations)
+        log_probs = action_distribution.log_prob(actions)
+        loss = -(log_probs*advantages).sum()
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        return {'Training Loss': ptu.to_numpy(loss)}

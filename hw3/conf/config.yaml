@@ -1,6 +1,6 @@
 
 env_name: 'cheetah-ift6163-v0' # ['cheetah-ift6163-v0', 'reacher-ift6163-v0', 'obstacles-ift6163-v0' ]
-rl_alg: 'reinforce'               # ['reinforce', 'ac', 'dyna']
+rl_alg: 'ac'               # ['reinforce', 'ac', 'dyna']
 ep_len: 200
 exp_name: 'todo'
 n_iter: 3
@@ -19,6 +19,10 @@ dont_standardize_advantages: False
 reward_to_go: True
 nn_baseline: True
 gae_lambda: 0.95
+num_target_updates: 1
+num_grad_steps_per_target_update: 1
+num_critic_updates_per_agent_update: 1
+num_actor_updates_per_agent_update: 1
 size: 250
 seed: 1
 no_gpu: False

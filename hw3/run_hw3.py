@@ -27,6 +27,8 @@ class pg_Trainer(object):
             'n_layers': params['n_layers'],
             'size': params['size'],
             'learning_rate': params['learning_rate'],
+            'num_target_updates': params['num_target_updates'],
+            'num_grad_steps_per_target_update': params['num_grad_steps_per_target_update']
             }
 
         estimate_advantage_args = {
@@ -43,6 +45,8 @@ class pg_Trainer(object):
             'discrete': False,
             'ob_dim':  0,
             'ac_dim': 0,
+            'num_critic_updates_per_agent_update': params['num_critic_updates_per_agent_update'],
+            'num_actor_updates_per_agent_update': params['num_actor_updates_per_agent_update']
         }
 
         
@@ -57,9 +61,9 @@ class pg_Trainer(object):
         if self.params['rl_alg'] == 'reinforce':
             agent = PGAgent
         if self.params['rl_alg'] == 'ac':
-            agent = ACagent
+            agent = ACAgent
         if self.params['rl_alg'] == 'dyna':
-            agent = MBagent
+            agent = MBAgent
         print(self.params)
 
         ################
