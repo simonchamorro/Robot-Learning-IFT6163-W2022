@@ -37,6 +37,7 @@ class pg_Trainer(object):
             'reward_to_go': params['reward_to_go'],
             'nn_baseline': params['nn_baseline'],
             'gae_lambda': params['gae_lambda'],
+            'action_noise_std': params['action_noise_std']
         }
 
 

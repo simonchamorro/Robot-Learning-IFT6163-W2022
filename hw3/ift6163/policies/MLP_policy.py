@@ -127,10 +127,25 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 #####################################################
 
 class MLPPolicyPG(MLPPolicy):
-    def __init__(self, ac_dim, ob_dim, n_layers, size, **kwargs):
+    def __init__(self, ac_dim, ob_dim, n_layers, size, action_noise_std, **kwargs):
 
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
         self.baseline_loss = nn.MSELoss()
+        self.action_noise_std = action_noise_std
+
+    def get_action(self, obs: np.ndarray) -> np.ndarray:
+        if len(obs.shape) > 1:
+            observation = obs
+        else:
+            observation = obs[None]
+
+        # Return the action that the policy prescribes
+        observation = ptu.from_numpy(observation)
+        distribution = self.forward(observation) 
+        action = distribution.sample()
+        np_action = ptu.to_numpy(action)
+        noise = np.random.normal(loc=0.0, scale=self.action_noise_std, size=np_action.size)
+        return np_action + noise
 
     def update(self, observations, actions, advantages, q_values=None):
         observations = ptu.from_numpy(observations)

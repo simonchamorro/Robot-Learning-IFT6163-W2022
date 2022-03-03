@@ -30,6 +30,7 @@ ensemble_size: 3
 add_sl_noise: True
 
 # Policy Gradient
+action_noise_std: 0.0
 reward_to_go: False
 nn_baseline: False
 gae_lambda: Null
