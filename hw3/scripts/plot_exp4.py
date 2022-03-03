@@ -27,15 +27,9 @@ def plot_results(data, title, name):
         x = np.arange(len(v['Eval_AverageReturn']))
         y = np.array(v['Eval_AverageReturn'])
         std = np.array(v['Eval_StdReturn'])
-        # TODO get lr and batch size for label
-        # lr = k.split('_r')[-1].split('lb_')[-1].split('_Inverted')[0]
-        # if lr == '02':
-        #     label = 'lr: 0.02'
-        # elif lr == '01':
-        #     label = 'lr: 0.01'
-        # else:
-        #     label = 'lr: 0.005'
-        label = ''
+        b = k.split('_b')[-1].split('_lr')[0]
+        lr = k.split('_lr')[-1].split('_rtg')[0]
+        label = 'b=' + b + ', lr=' + lr
         plt.plot(x, y, label=label)
         plt.fill_between(x, y-std, y+std, alpha=0.3)
 
@@ -59,6 +53,7 @@ if __name__ == '__main__':
         results[exp.split('/')[2]] = get_eventfile_results(exp)
     plot_results(results, 'Hyperparameter Search in HalfCheetah', 'q4-search.png')
 
+    # TODO plot results for final HPs
 
 
     
