@@ -35,10 +35,14 @@ reward_to_go: False
 nn_baseline: False
 gae_lambda: Null
 dont_standardize_advantages: False
-num_target_updates: 1
-num_grad_steps_per_target_update: 1
+num_target_updates: 10
+num_grad_steps_per_target_update: 10
 num_critic_updates_per_agent_update: 1
 num_actor_updates_per_agent_update: 1
+
+# Dyna
+train_critic_with_new_data: False
+training_batch_size_dyna: 1024
 
 # Other
 seed: 1

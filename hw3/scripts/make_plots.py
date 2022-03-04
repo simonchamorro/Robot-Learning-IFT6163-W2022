@@ -132,30 +132,40 @@ def q6(exp_name):
     label = 'ntu=' + ntu + ', ngsptu=' + ngsptu
     return label, None
 
+def q8(exp_name):
+    b = exp_name.split('_b')[-1].split('_')[0]
+    label = 'b=' + b 
+    colors = {'b=2000':'C0', 'b=5000':'C1'}
+    return label, colors
+
 
 if __name__ == '__main__':    
-    # Q1
-    plot_graph('hw3_q1_sb*', 'Small Batch Experiments', 'q1-01.png', q1)
-    plot_graph('hw3_q1_lb*', 'Large Batch Experiments', 'q1-02.png', q1)
+    # # Q1
+    # plot_graph('hw3_q1_sb*', 'Small Batch Experiments', 'q1-01.png', q1)
+    # plot_graph('hw3_q1_lb*', 'Large Batch Experiments', 'q1-02.png', q1)
 
-    # Q2
-    plot_graph('hw3_q2_b256*', 'Batch size of 256', 'q2-0256.png', q2)
-    plot_agg('hw3_q2_final*', 'Final Config Over 5 Seeds', 'q2-final.png', label='b=256, lr=0.01')
+    # # Q2
+    # plot_graph('hw3_q2_b256*', 'Batch size of 256', 'q2-0256.png', q2)
+    # plot_agg('hw3_q2_final*', 'Final Config Over 5 Seeds', 'q2-final.png', label='b=256, lr=0.01')
 
-    # Q3    
-    plot_graph('hw3_q3_*', 'Performance on Lunar Lander', 'q3-lunar-lander.png', q3)
+    # # Q3    
+    # plot_graph('hw3_q3_*', 'Performance on Lunar Lander', 'q3-lunar-lander.png', q3)
 
-    # Q4 
-    plot_graph('hw3_q4_search*', 'Hyperparameter Search in HalfCheetah', 'q4-search.png', q4_search)
-    plot_graph('hw3_q4_b*', 'Policy Gradient in HalfCheetah', 'q4-final.png', q4_final)
+    # # Q4 
+    # plot_graph('hw3_q4_search*', 'Hyperparameter Search in HalfCheetah', 'q4-search.png', q4_search)
+    # plot_graph('hw3_q4_b*', 'Policy Gradient in HalfCheetah', 'q4-final.png', q4_final)
     
-    # Q5
-    plot_graph('hw3_q5_b*', 'GAE in Hopper', 'q5-normal.png', q5)
-    plot_graph('hw3_q5_noisy*', 'GAE in Noisy Hopper', 'q5-noisy.png', q5)
+    # # Q5
+    # plot_graph('hw3_q5_b*', 'GAE in Hopper', 'q5-normal.png', q5)
+    # plot_graph('hw3_q5_noisy*', 'GAE in Noisy Hopper', 'q5-noisy.png', q5)
 
-    # Q6
-    plot_graph('hw3_q6*', 'Actor-Critic HP Search in Cartpole', 'q6-search.png', q6)
+    # # Q6
+    # plot_graph('hw3_q6*', 'Actor-Critic HP Search in Cartpole', 'q6-search.png', q6)
 
-    # Q7
-    plot_graph('hw3_q7_10_10_Inverted*', 'Actor-Critic in InvertedPendulum', 'q7-pendulum.png')
-    plot_graph('hw3_q7_10_10_Half*', 'Actor-Critic in HalfCheetah', 'q7-cheetah.png')
+    # # Q7
+    # plot_graph('hw3_q7_10_10_Inverted*', 'Actor-Critic in InvertedPendulum', 'q7-pendulum.png')
+    # plot_graph('hw3_q7_10_10_Half*', 'Actor-Critic in HalfCheetah', 'q7-cheetah.png')
+
+    # Q8
+    plot_graph('hw3_q8*00_cheeta*', 'Dyna Agent in Cheetah', 'q8-dyna.png', q8)
+    plot_graph('hw3_q8*all*', 'Dyna Agent in Cheetah (All data for critic training)', 'q8-dyna-all.png', q8)
