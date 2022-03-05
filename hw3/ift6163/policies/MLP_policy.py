@@ -186,8 +186,9 @@ class MLPPolicyPG(MLPPolicy):
         distribution = self.forward(observation) 
         action = distribution.sample()
         np_action = ptu.to_numpy(action)
-        noise = np.random.normal(loc=0.0, scale=self.action_noise_std, size=np_action.size)
-        return np_action + noise
+        if not self.discrete:
+            np_action += np.random.normal(loc=0.0, scale=self.action_noise_std, size=np_action.size)
+        return np_action
 
     def update(self, observations, actions, advantages, q_values=None):
         observations = ptu.from_numpy(observations)
