@@ -15,6 +15,7 @@ batch_size: 1000
 batch_size_initial: 1000
 train_batch_size: 1000
 eval_batch_size: 1000 
+num_proc_data_collection: 1
 
 # Model architecture
 size: 64

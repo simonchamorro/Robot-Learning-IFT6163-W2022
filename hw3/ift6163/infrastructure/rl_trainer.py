@@ -3,6 +3,9 @@ import pickle
 import os
 import sys
 import time
+import copy
+import logging
+import multiprocessing as mp
 
 import gym
 from gym import wrappers
@@ -190,8 +193,30 @@ class RL_Trainer(object):
         """
         # Collect `batch_size` samples to be used for training
         print("\nCollecting data to be used for training...")
-        paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, num_transitions_to_sample, 
-                                                               self.params['ep_len'], render=False)
+        start_time = time.time()
+        num_proc = min(self.params['num_proc_data_collection'], mp.cpu_count())
+
+        if num_proc > 1 and self.params['no_gpu']:
+            
+            pool = mp.Pool(num_proc)
+            result_objects = [pool.apply_async(utils.sample_trajectories, args=(copy.deepcopy(self.env), 
+                                  copy.deepcopy(collect_policy), 
+                                  num_transitions_to_sample // num_proc + 1,
+                                  self.params['ep_len'])) for _ in range(num_proc)]
+            pool.close() 
+            pool.join()
+            paths = [r.get()[0] for r in result_objects]
+            paths = [path for sublist in paths for path in sublist]
+            envsteps_this_batch = np.sum([r.get()[1] for r in result_objects])
+
+        else:
+            paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, num_transitions_to_sample, 
+                                                                   self.params['ep_len'], render=False)
+
+        data_collection_time = time.time() - start_time
+        print("\nData collection time: " + str(data_collection_time))
+        log = logging.getLogger(__name__)
+        log.info("Data collection time: " + str(data_collection_time))
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard
         # note: here, we collect MAX_NVIDEO rollouts, each of length MAX_VIDEO_LEN
