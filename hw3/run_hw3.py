@@ -50,6 +50,7 @@ class pg_Trainer(object):
             'num_actor_updates_per_agent_update': params['num_actor_updates_per_agent_update'],
             'training_batch_size_dyna': params['training_batch_size_dyna'],
             'train_critic_with_new_data': params['train_critic_with_new_data'],
+            'pg_steps': params['pg_steps'],
         }
 
         
