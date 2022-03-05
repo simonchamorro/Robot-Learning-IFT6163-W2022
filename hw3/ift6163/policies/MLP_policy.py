@@ -127,11 +127,53 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 #####################################################
 
 class MLPPolicyPG(MLPPolicy):
-    def __init__(self, ac_dim, ob_dim, n_layers, size, action_noise_std, **kwargs):
+    def __init__(self, ac_dim, ob_dim, n_layers, size, action_noise_std, clip_loss=False, **kwargs):
 
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
         self.baseline_loss = nn.MSELoss()
         self.action_noise_std = action_noise_std
+        self.clip_loss = clip_loss
+        if self.clip_loss:
+            if self.discrete:
+                self.logits_na_old = ptu.build_mlp(input_size=self.ob_dim,
+                                               output_size=self.ac_dim,
+                                               n_layers=self.n_layers,
+                                               size=self.size)
+                self.logits_na_old.to(ptu.device)
+                self.logits_na_old.load_state_dict(self.logits_na.state_dict())
+            else:
+                self.mean_net_old = ptu.build_mlp(input_size=self.ob_dim,
+                                          output_size=self.ac_dim,
+                                          n_layers=self.n_layers, size=self.size)
+                self.logstd_old = nn.Parameter(
+                    torch.zeros(self.ac_dim, dtype=torch.float32, device=ptu.device)
+                )
+                self.mean_net_old.to(ptu.device)
+                self.logstd_old.to(ptu.device)
+                self.mean_net_old.load_state_dict(self.mean_net.state_dict())
+
+    def forward_old(self, observation: torch.FloatTensor):
+        with torch.no_grad():
+            if self.discrete:
+                logits = self.logits_na_old(observation)
+                action_distribution = distributions.Categorical(logits=logits)
+                return action_distribution
+            else:
+                batch_mean = self.mean_net_old(observation)
+                scale_tril = torch.diag(torch.exp(self.logstd.detach()))
+                batch_dim = batch_mean.shape[0]
+                batch_scale_tril = scale_tril.repeat(batch_dim, 1, 1)
+                action_distribution = distributions.MultivariateNormal(
+                    batch_mean,
+                    scale_tril=batch_scale_tril,
+                )
+                return action_distribution
+
+    def update_old_policy(self):
+        if self.discrete:
+            self.logits_na_old.load_state_dict(self.logits_na.state_dict())
+        else:
+            self.mean_net_old.load_state_dict(self.mean_net.state_dict())
 
     def get_action(self, obs: np.ndarray) -> np.ndarray:
         if len(obs.shape) > 1:
@@ -162,9 +204,21 @@ class MLPPolicyPG(MLPPolicy):
         # HINT4: use self.optimizer to optimize the loss. Remember to
             # 'zero_grad' first
 
-        action_distribution = self.forward(observations)
-        log_probs = action_distribution.log_prob(actions)
-        loss = - torch.mean(log_probs*advantages)
+        if self.clip_loss:
+            action_distribution = self.forward(observations)
+            action_distribution_old = self.forward_old(observations)
+            log_probs = action_distribution.log_prob(actions)
+            log_probs_old = action_distribution_old.log_prob(actions)
+            ratio = (log_probs - log_probs_old.detach()).exp()
+            clipped = torch.clamp(ratio, 0.8, 1.2)*advantages
+            m = torch.min(ratio*advantages, clipped)
+            loss = -torch.mean(m)
+            self.update_old_policy()
+
+        else: 
+            action_distribution = self.forward(observations)
+            log_probs = action_distribution.log_prob(actions)
+            loss = - torch.mean(log_probs*advantages)
         
         # Optimize
         self.optimizer.zero_grad()

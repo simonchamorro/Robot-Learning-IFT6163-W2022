@@ -51,6 +51,7 @@ class pg_Trainer(object):
             'training_batch_size_dyna': params['training_batch_size_dyna'],
             'train_critic_with_new_data': params['train_critic_with_new_data'],
             'pg_steps': params['pg_steps'],
+            'clip_policy_loss': params['clip_policy_loss'],
         }
 
         
