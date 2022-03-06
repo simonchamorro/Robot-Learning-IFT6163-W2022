@@ -29,7 +29,6 @@ class PGAgent(BaseAgent):
             learning_rate=self.agent_params['learning_rate'],
             nn_baseline=self.agent_params['nn_baseline'],
             action_noise_std=self.agent_params['action_noise_std'],
-            clip_loss=self.agent_params['clip_policy_loss'],
         )
 
         # replay buffer

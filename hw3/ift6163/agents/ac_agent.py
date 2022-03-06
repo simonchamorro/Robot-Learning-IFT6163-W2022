@@ -24,8 +24,9 @@ class ACAgent(BaseAgent):
             self.agent_params['ob_dim'],
             self.agent_params['n_layers'],
             self.agent_params['size'],
-            self.agent_params['discrete'],
-            self.agent_params['learning_rate'],
+            discrete=self.agent_params['discrete'],
+            learning_rate=self.agent_params['learning_rate'],
+            clip_loss=self.agent_params['clip_policy_loss'],
         )
         self.critic = BootstrappedContinuousCritic(self.agent_params)
 
