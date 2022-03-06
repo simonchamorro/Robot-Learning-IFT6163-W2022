@@ -1,0 +1,56 @@
+
+# General params
+env_name: 'CartPole-v0' # ['CartPole-v0', cheetah-ift6163-v0', 'reacher-ift6163-v0', 'obstacles-ift6163-v0' ]
+rl_alg: 'reinforce'               # ['reinforce', 'ac', 'dyna']
+ep_len: 200
+exp_name: 'todo'
+
+# Learning
+n_iter: 100
+learning_rate: 0.005
+num_agent_train_steps_per_iter: 1
+
+# Batch size
+batch_size: 1000
+batch_size_initial: 1000
+train_batch_size: 1000
+eval_batch_size: 1000 
+num_proc_data_collection: 1
+
+# Model architecture
+size: 64
+n_layers: 2
+n_layers_model: 2
+n_layers_policy: 2
+
+# Discounting
+discount: 1.0
+
+# Model based
+ensemble_size: 3
+add_sl_noise: True
+
+# Policy Gradient
+clip_policy_loss: False
+pg_steps: 1
+action_noise_std: 0.0
+reward_to_go: False
+nn_baseline: False
+gae_lambda: Null
+dont_standardize_advantages: False
+num_target_updates: 10
+num_grad_steps_per_target_update: 10
+num_critic_updates_per_agent_update: 1
+num_actor_updates_per_agent_update: 1
+
+# Dyna
+train_critic_with_new_data: False
+training_batch_size_dyna: 1024
+
+# Other
+seed: 1
+no_gpu: False
+which_gpu: 0
+video_log_freq: -1
+scalar_log_freq: 1
+save_params: True
