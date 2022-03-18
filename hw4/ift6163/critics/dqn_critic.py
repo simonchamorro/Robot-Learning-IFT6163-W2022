@@ -92,6 +92,7 @@ class DQNCritic(BaseCritic):
         q_t_values = torch.gather(qa_t_values, 1, ac_na.unsqueeze(1)).squeeze(1)
         
         # TODO compute the Q-values from the target network 
+        breakpoint()
         qa_tp1_values = TODO
 
         if self.double_q:

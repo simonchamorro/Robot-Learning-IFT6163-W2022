@@ -87,8 +87,16 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
     # query the policy with observation(s) to get selected action(s)
     def get_action(self, obs: np.ndarray) -> np.ndarray:
-        # TODO: get this from HW1
-        pass
+        if len(obs.shape) > 1:
+            observation = obs
+        else:
+            observation = obs[None]
+
+        # Return the action that the policy prescribes
+        observation = ptu.from_numpy(observation)
+        distribution = self.forward(observation) 
+        action = distribution.sample()
+        return ptu.to_numpy(action)
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -124,7 +132,7 @@ class MLPPolicyPG(MLPPolicy):
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
         self._baseline_loss = nn.MSELoss()
 
-    def update(self, observations, actions, advantages, q_values=None):
+   def update(self, observations, actions, advantages, q_values=None):
         observations = ptu.from_numpy(observations)
         actions = ptu.from_numpy(actions)
         advantages = ptu.from_numpy(advantages)
@@ -136,26 +144,42 @@ class MLPPolicyPG(MLPPolicy):
         # HINT2: you will want to use the `log_prob` method on the distribution returned
             # by the `forward` method
         # HINT3: don't forget that `optimizer.step()` MINIMIZES a loss
-        # HINT4: use self._optimizer to optimize the loss. Remember to
+        # HINT4: use self.optimizer to optimize the loss. Remember to
             # 'zero_grad' first
 
-        TODO
-
-        if self._nn_baseline:
-            ## TODO: update the neural network baseline using the q_values as
-            ## targets. The q_values should first be normalized to have a mean
-            ## of zero and a standard deviation of one.
-
-            ## HINT1: use self._baseline_optimizer to optimize the loss used for
-                ## updating the baseline. Remember to 'zero_grad' first
-            ## HINT2: You will need to convert the targets into a tensor using
-                ## ptu.from_numpy before using it in the loss
-
-            TODO
+        action_distribution = self.forward(observations)
+        log_probs = action_distribution.log_prob(actions)
+        loss = - torch.mean(log_probs*advantages)
+        
+        # Optimize
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
 
         train_log = {
             'Training Loss': ptu.to_numpy(loss),
         }
+
+        if self.nn_baseline:
+            ## TODO: update the neural network baseline using the q_values as
+            ## targets. The q_values should first be normalized to have a mean
+            ## of zero and a standard deviation of one.
+
+            ## HINT1: use self.baseline_optimizer to optimize the loss used for
+                ## updating the baseline. Remember to 'zero_grad' first
+            ## HINT2: You will need to convert the targets into a tensor using
+                ## ptu.from_numpy before using it in the loss
+
+            self.baseline_optimizer.zero_grad()
+            q_values = ptu.from_numpy(q_values)
+            normalized_q_vals = normalize(q_values, q_values.mean(), q_values.std())
+            baseline_pred = self.baseline(observations).squeeze()
+            baseline_loss = self.baseline_loss(baseline_pred, normalized_q_vals)
+            baseline_loss.backward()
+            self.baseline_optimizer.step()
+
+            train_log['Baseline Loss'] = ptu.to_numpy(baseline_loss)
+
         return train_log
 
     def run_baseline_prediction(self, observations):
@@ -173,9 +197,20 @@ class MLPPolicyPG(MLPPolicy):
         return ptu.to_numpy(pred.squeeze())
 
 class MLPPolicyAC(MLPPolicy):
-    def update(self, observations, actions, adv_n=None):
-        # TODO: update the policy and return the loss
-        return loss.item()
+    def update(self, observations, actions, advantages):
+        observations = ptu.from_numpy(observations)
+        actions = ptu.from_numpy(actions)
+        advantages = ptu.from_numpy(advantages)
+
+        action_distribution = self.forward(observations)
+        log_probs = action_distribution.log_prob(actions)
+        loss = -(log_probs*advantages).sum()
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        return {'Training Loss': ptu.to_numpy(loss)}
     
 class ConcatMLP(MLPPolicy):
     """
@@ -199,6 +234,7 @@ class MLPPolicyDeterministic(MLPPolicy):
         super().__init__(*args, **kwargs)
         
     def update(self, observations, q_fun):
+        breakpoint()
         # TODO: update the policy and return the loss
         ## Hint you will need to use the q_fun for the loss
         ## Hint: do not update the parameters for q_fun in the loss

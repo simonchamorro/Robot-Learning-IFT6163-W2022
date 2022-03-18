@@ -33,6 +33,7 @@ class DQNAgent(object):
         self.num_param_updates = 0
 
     def add_to_replay_buffer(self, paths):
+        breakpoint()
         pass
 
     def step_env(self):
@@ -48,6 +49,7 @@ class DQNAgent(object):
             # in dqn_utils.py
         self.replay_buffer_idx = -1
 
+        breakpoint()
         eps = self.exploration.value(self.t)
 
         # TODO use epsilon greedy exploration when selecting action
@@ -92,6 +94,7 @@ class DQNAgent(object):
         ):
 
             # TODO fill in the call to the update function using the appropriate tensors
+            breakpoint()
             log = self.critic.update(
                 TODO
             )

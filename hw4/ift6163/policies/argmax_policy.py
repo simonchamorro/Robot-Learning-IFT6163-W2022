@@ -12,6 +12,7 @@ class ArgMaxPolicy(object):
         else:
             observation = obs[None]
         
+        breakpoint()
         ## TODO return the action that maxinmizes the Q-value 
         # at the current observation as the output
         return action.squeeze()
