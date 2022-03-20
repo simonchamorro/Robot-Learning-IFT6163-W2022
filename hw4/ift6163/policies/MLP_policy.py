@@ -113,14 +113,18 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             action_distribution = distributions.Categorical(logits=logits)
             return action_distribution
         else:
-            batch_mean = self._mean_net(observation)
-            scale_tril = torch.diag(torch.exp(self._logstd))
-            batch_dim = batch_mean.shape[0]
-            batch_scale_tril = scale_tril.repeat(batch_dim, 1, 1)
-            action_distribution = distributions.MultivariateNormal(
-                batch_mean,
-                scale_tril=batch_scale_tril,
-            )
+            if self.deterministic:
+                # TODO
+                breakpoint()
+            else:
+                batch_mean = self._mean_net(observation)
+                scale_tril = torch.diag(torch.exp(self._logstd))
+                batch_dim = batch_mean.shape[0]
+                batch_scale_tril = scale_tril.repeat(batch_dim, 1, 1)
+                action_distribution = distributions.MultivariateNormal(
+                    batch_mean,
+                    scale_tril=batch_scale_tril,
+                )
             return action_distribution
 
 #####################################################
@@ -132,12 +136,12 @@ class MLPPolicyPG(MLPPolicy):
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
         self._baseline_loss = nn.MSELoss()
 
-   def update(self, observations, actions, advantages, q_values=None):
+    def update(self, observations, actions, advantages, q_values=None):
         observations = ptu.from_numpy(observations)
         actions = ptu.from_numpy(actions)
         advantages = ptu.from_numpy(advantages)
 
-        # TODO: update the policy using policy gradient
+        # Update the policy using policy gradient
         # HINT1: Recall that the expression that we want to MAXIMIZE
             # is the expectation over collected trajectories of:
             # sum_{t=0}^{T-1} [grad [log pi(a_t|s_t) * (Q_t - b_t)]]
@@ -161,7 +165,7 @@ class MLPPolicyPG(MLPPolicy):
         }
 
         if self.nn_baseline:
-            ## TODO: update the neural network baseline using the q_values as
+            ## Update the neural network baseline using the q_values as
             ## targets. The q_values should first be normalized to have a mean
             ## of zero and a standard deviation of one.
 
