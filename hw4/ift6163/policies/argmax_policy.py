@@ -18,7 +18,5 @@ class ArgMaxPolicy(object):
         ## Return the action that maxinmizes the Q-value 
         # at the current observation as the output
         q_val = self.critic.qa_values(observation)
-        if self.critic.double_q:
-            q_val = np.min(q_val, axis=1)
         action = np.argmax(q_val)
         return action

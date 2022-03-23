@@ -94,9 +94,15 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
         # Return the action that the policy prescribes
         observation = ptu.from_numpy(observation)
-        distribution = self.forward(observation) 
-        action = distribution.sample()
-        return ptu.to_numpy(action)
+
+        if self._deterministic:
+            action = self.forward(observation)
+        
+        else:
+            distribution = self.forward(observation) 
+            action = distribution.sample()
+        
+        return ptu.to_numpy(action) 
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -113,9 +119,8 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             action_distribution = distributions.Categorical(logits=logits)
             return action_distribution
         else:
-            if self.deterministic:
-                # TODO
-                breakpoint()
+            if self._deterministic:
+                return self._mean_net(observation)
             else:
                 batch_mean = self._mean_net(observation)
                 scale_tril = torch.diag(torch.exp(self._logstd))
@@ -125,7 +130,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
                     batch_mean,
                     scale_tril=batch_scale_tril,
                 )
-            return action_distribution
+                return action_distribution
 
 #####################################################
 #####################################################
