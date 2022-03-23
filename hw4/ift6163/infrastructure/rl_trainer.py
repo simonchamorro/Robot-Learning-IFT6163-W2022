@@ -14,6 +14,7 @@ from ift6163.infrastructure import utils
 from ift6163.infrastructure.logger import Logger
 
 from ift6163.agents.dqn_agent import DQNAgent
+from ift6163.agents.ddpg_agent import DDPGAgent
 from ift6163.infrastructure.dqn_utils import (
         get_wrapper_by_name,
         register_custom_envs,
@@ -155,7 +156,7 @@ class RL_Trainer(object):
                 self.logmetrics = False
 
             # collect trajectories, to be used for training
-            if isinstance(self.agent, DQNAgent):
+            if isinstance(self.agent, DQNAgent) or isinstance(self.agent, DDPGAgent):
                 # only perform an env step and add to replay buffer for DQN
                 self.agent.step_env()
                 envsteps_this_batch = 1

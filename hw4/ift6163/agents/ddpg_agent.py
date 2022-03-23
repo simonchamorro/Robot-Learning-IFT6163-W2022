@@ -3,6 +3,7 @@ import numpy as np
 from ift6163.infrastructure.replay_buffer import ReplayBuffer
 from ift6163.policies.MLP_policy import MLPPolicyDeterministic
 from ift6163.critics.ddpg_critic import DDPGCritic
+from ift6163.infrastructure.dqn_utils import MemoryOptimizedReplayBuffer
 import copy
 
 class DDPGAgent(object):
@@ -12,7 +13,6 @@ class DDPGAgent(object):
         self.agent_params = agent_params
         print ("agent_params", agent_params)
         self.batch_size = agent_params['train_batch_size']
-        # import ipdb; ipdb.set_trace()
         self.last_obs = self.env.reset()
 
         self.num_actions = self.env.action_space.shape[0]
@@ -35,8 +35,11 @@ class DDPGAgent(object):
         ## Create the Q function
         self.q_fun = DDPGCritic(self.actor, agent_params, self.optimizer_spec)
 
-        lander = agent_params['env_name'].startswith('LunarLander')
-        self.replay_buffer = ReplayBuffer()
+        ## Hint: We can use the Memory optimized replay buffer but now we have continuous actions
+        self.replay_buffer = MemoryOptimizedReplayBuffer(
+            agent_params['replay_buffer_size'], agent_params['frame_history_len'], lander=True,
+            continuous_actions=True, ac_dim=self.agent_params['ac_dim'])
+        
         self.t = 0
         self.num_param_updates = 0
         
@@ -44,6 +47,7 @@ class DDPGAgent(object):
         pass
 
     def step_env(self):
+        breakpoint()
         """
             Step the env and store the transition
             At the end of this block of code, the simulator should have been
@@ -108,3 +112,6 @@ class DDPGAgent(object):
 
         self.t += 1
         return log
+
+    def save(self, path):
+        print("Save not implemented")
