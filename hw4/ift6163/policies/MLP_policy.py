@@ -243,8 +243,11 @@ class MLPPolicyDeterministic(MLPPolicy):
         super().__init__(*args, **kwargs)
         
     def update(self, observations, q_fun):
-        breakpoint()
-        # TODO: update the policy and return the loss
+        # Update the policy and return the loss
         ## Hint you will need to use the q_fun for the loss
         ## Hint: do not update the parameters for q_fun in the loss
+        observations = ptu.from_numpy(observations)
+        actions = self(observations)
+        q_val = q_fun(observations, actions)
+        loss = -q_val.mean()
         return loss.item()
