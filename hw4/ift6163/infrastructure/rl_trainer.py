@@ -15,6 +15,7 @@ from ift6163.infrastructure.logger import Logger
 
 from ift6163.agents.dqn_agent import DQNAgent
 from ift6163.agents.ddpg_agent import DDPGAgent
+from ift6163.agents.td3_agent import TD3Agent
 from ift6163.infrastructure.dqn_utils import (
     get_wrapper_by_name,
     register_custom_envs,
@@ -155,7 +156,7 @@ class RL_Trainer(object):
                 self.logmetrics = False
 
             # collect trajectories, to be used for training
-            if isinstance(self.agent, DQNAgent) or isinstance(self.agent, DDPGAgent):
+            if isinstance(self.agent, DQNAgent) or isinstance(self.agent, DDPGAgent) or isinstance(self.agent, TD3Agent):
                 # only perform an env step and add to replay buffer for DQN
                 self.agent.step_env()
                 envsteps_this_batch = 1
@@ -190,7 +191,7 @@ class RL_Trainer(object):
                 print('\nBeginning logging procedure...')
                 if isinstance(self.agent, DQNAgent):
                     self.perform_dqn_logging(all_logs)
-                elif isinstance(self.agent, DDPGAgent):
+                elif isinstance(self.agent, DDPGAgent) or isinstance(self.agent, TD3Agent):
                     if itr % 500 == 0:
                         self.perform_ddpg_logging(itr, all_logs, eval_policy)
                 else:
