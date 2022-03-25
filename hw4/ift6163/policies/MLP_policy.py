@@ -26,11 +26,18 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
                  training=True,
                  nn_baseline=False,
                  deterministic=False,
+                 action_max=1,
                  **kwargs
                  ):
         super().__init__(**kwargs)
 
         # init vars
+        if not isinstance(action_max, int):
+            self.action_max = ptu.from_numpy(action_max)
+            self.apply_tanh = True
+        else:
+            self.action_max = 1
+            self.apply_tanh = False
 
         if self._discrete:
             self._logits_na = ptu.build_mlp(input_size=self._ob_dim,
@@ -120,7 +127,9 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             return action_distribution
         else:
             if self._deterministic:
-                return self._mean_net(observation)
+                out = self._mean_net(observation)
+                action = torch.tanh(out) if self.apply_tanh else out
+                return  action * self.action_max
             else:
                 batch_mean = self._mean_net(observation)
                 scale_tril = torch.diag(torch.exp(self._logstd))
@@ -246,8 +255,19 @@ class MLPPolicyDeterministic(MLPPolicy):
         # Update the policy and return the loss
         ## Hint you will need to use the q_fun for the loss
         ## Hint: do not update the parameters for q_fun in the loss
+        for param in q_fun.parameters():
+            param.requires_grad = False
+
         observations = ptu.from_numpy(observations)
         actions = self(observations)
         q_val = q_fun(observations, actions)
         loss = -q_val.mean()
+
+        self._optimizer.zero_grad()
+        loss.backward()
+        self._optimizer.step()
+
+        for param in q_fun.parameters():
+            param.requires_grad = True
+
         return loss.item()

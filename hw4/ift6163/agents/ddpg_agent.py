@@ -30,7 +30,8 @@ class DDPGAgent(object):
             self.agent_params['size'],
             discrete=self.agent_params['discrete'],
             learning_rate=self.agent_params['learning_rate'],
-            nn_baseline=False
+            nn_baseline=False,
+            action_max=self.env.action_space.high
         )
         ## Create the Q function
         self.q_fun = DDPGCritic(self.actor, agent_params, self.optimizer_spec)
@@ -59,14 +60,19 @@ class DDPGAgent(object):
             # in dqn_utils.py
         self.replay_buffer_idx = self.replay_buffer.store_frame(self.last_obs)
 
-        # Take action from the policy and add noise 
-        frames = self.replay_buffer.encode_recent_observation()
-        action = self.actor.get_action(frames)
+        perform_random_action = self.t < self.learning_starts
+        if perform_random_action:
+            action = self.env.action_space.sample()
+
+        else:
+            # Take action from the policy and add noise 
+            frames = self.replay_buffer.encode_recent_observation()
+            action = self.actor.get_action(frames)
         
-        # Add noise to the deterministic policy
-        noise = np.random.normal(scale=0.1, size=action.shape)
-        action += noise
-        action = np.clip(action, self.env.action_space.low, self.env.action_space.high)
+            # Add noise to the deterministic policy
+            noise = np.random.normal(scale=0.1, size=action.shape)
+            action += noise
+            action = np.clip(action, self.env.action_space.low, self.env.action_space.high)
 
         # Take a step in the environment using the action from the policy
         # HINT1: remember that self.last_obs must always point to the newest/latest observation
@@ -102,7 +108,7 @@ class DDPGAgent(object):
             
             # Fill in the call to the update function using the appropriate tensors
             ## Hint the actor will need a copy of the q_net to maximize the Q-function
-            log['Policy Loss'] = self.actor.update(ob_no, copy.deepcopy(self.q_fun.q_net))
+            log['Policy Loss'] = self.actor.update(ob_no, self.q_fun.q_net)
 
             # Update the target network periodically 
             # HINT: your critic already has this functionality implemented

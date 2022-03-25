@@ -8,7 +8,7 @@ batch_size: 64 ## The min amount of experience to collect before a training upda
 train_batch_size: 64 ## training batch size used for computing gradients of q function or policy
 eval_batch_size: 4096 ## How much experience should be collected over the environment to evaluate the average reward of a policy
 num_agent_train_steps_per_iter: 2 ## Number of training updates after #batch_size experience is collected. 
-num_critic_updates_per_agent_update: 2 ## Number of training updates after #batch_size experience is collected.
+# num_critic_updates_per_agent_update: 2 ## Number of training updates after #batch_size experience is collected.
 seed: 1
 no_gpu: False
 which_gpu: 0
