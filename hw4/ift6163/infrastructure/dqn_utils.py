@@ -37,7 +37,7 @@ def register_custom_envs():
         )
 
 
-def get_env_kwargs(env_name):
+def get_env_kwargs(env_name, start_eps=1.0):
     if env_name in ['MsPacman-v0', 'PongNoFrameskip-v4']:
         kwargs = {
             'learning_starts': 50000,
@@ -53,7 +53,7 @@ def get_env_kwargs(env_name):
             'gamma': 0.99,
         }
         kwargs['optimizer_spec'] = atari_optimizer(kwargs['num_timesteps'])
-        kwargs['exploration_schedule'] = atari_exploration_schedule(kwargs['num_timesteps'])
+        kwargs['exploration_schedule'] = atari_exploration_schedule(kwargs['num_timesteps'], start_eps=start_eps)
 
     elif env_name == 'LunarLander-v3':
         def lunar_empty_wrapper(env):
@@ -119,10 +119,10 @@ def create_atari_q_network(ob_dim, num_actions):
         nn.Linear(512, num_actions),
     )
 
-def atari_exploration_schedule(num_timesteps):
+def atari_exploration_schedule(num_timesteps, start_eps=1.0):
     return PiecewiseSchedule(
         [
-            (0, 1.0),
+            (0, start_eps),
             (1e6, 0.1),
             (num_timesteps / 8, 0.01),
         ], outside_value=0.01
