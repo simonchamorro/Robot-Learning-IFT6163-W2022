@@ -1,6 +1,6 @@
 # HW3 Policy Gradients - Simon Chamorro
 
-All the experiment logs that were conducted for this homework are stored in the `run_logs folder`. Additionally, results can be reproduced by running the script `scripts/run_all.sh`. To run experiments for a specific question, run;
+All the experiment logs that were conducted for this homework are stored in the `run_logs` folder. Additionally, results can be reproduced by running the script `scripts/run_all.sh`. To run experiments for a specific question, run;
 ```
 bash scripts/<exp_number>-<exp_name>.sh
 ```
