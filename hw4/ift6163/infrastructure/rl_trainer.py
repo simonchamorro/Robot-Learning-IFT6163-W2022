@@ -190,9 +190,10 @@ class RL_Trainer(object):
                 # perform logging
                 print('\nBeginning logging procedure...')
                 if isinstance(self.agent, DQNAgent):
-                    self.perform_dqn_logging(all_logs)
-                elif isinstance(self.agent, DDPGAgent) or isinstance(self.agent, TD3Agent):
                     if itr % 500 == 0:
+                        self.perform_dqn_logging(all_logs)
+                elif isinstance(self.agent, DDPGAgent) or isinstance(self.agent, TD3Agent):
+                    if itr % 100 == 0:
                         self.perform_ddpg_logging(itr, all_logs, eval_policy)
                 else:
                     self.perform_logging(itr, paths, eval_policy, train_video_paths, all_logs)
@@ -246,28 +247,37 @@ class RL_Trainer(object):
     ####################################
     def perform_dqn_logging(self, all_logs):
         last_log = all_logs[-1]
+        rew_std = -10000
 
         episode_rewards = get_wrapper_by_name(self.env, "Monitor").get_episode_rewards()
         if len(episode_rewards) > 0:
             self.mean_episode_reward = np.mean(episode_rewards[-100:])
+            std_rew = np.std(episode_rewards[-100:])
         if len(episode_rewards) > 100:
             self.best_mean_episode_reward = max(self.best_mean_episode_reward, self.mean_episode_reward)
 
         logs = OrderedDict()
 
         logs["Train_EnvstepsSoFar"] = self.agent.t
+        logs["Train_StdReturn"] = rew_std
         print("Timestep %d" % (self.agent.t,))
         if self.mean_episode_reward > -5000:
             logs["Train_AverageReturn"] = np.mean(self.mean_episode_reward)
+        else:
+            logs["Train_AverageReturn"] = -10000
+
+
         print("mean reward (100 episodes) %f" % self.mean_episode_reward)
         if self.best_mean_episode_reward > -5000:
             logs["Train_BestReturn"] = np.mean(self.best_mean_episode_reward)
+        else:
+            logs["Train_BestReturn"] = -10000
+
         print("best mean reward %f" % self.best_mean_episode_reward)
 
-        if self.start_time is not None:
-            time_since_start = (time.time() - self.start_time)
-            print("running time %f" % time_since_start)
-            logs["TimeSinceStart"] = time_since_start
+        time_since_start = (time.time() - self.start_time)
+        print("running time %f" % time_since_start)
+        logs["TimeSinceStart"] = time_since_start
 
         logs.update(last_log)
 

@@ -83,7 +83,7 @@ def my_app(cfg: DictConfig):
     ##################################
 
 
-    logdir_prefix = 'hw3_'  # keep for autograder
+    logdir_prefix = 'hw4_'  # keep for autograder
 
     data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
 
